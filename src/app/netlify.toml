@@ -1,0 +1,16 @@
+# This is a configuration file for Netlify.
+# It tells Netlify's build system how to deploy your Next.js project.
+
+[build]
+  # This command tells Netlify to run the 'next build' script,
+  # which is the standard command to build a Next.js application for production.
+  command = "next build"
+  
+  # This specifies the directory that Netlify should publish to the web.
+  # For Next.js, the output of the build process is located in the '.next' folder.
+  publish = ".next"
+
+[dev]
+  # This sets the port for the local development server.
+  # It's good practice to keep this consistent.
+  port = 3000

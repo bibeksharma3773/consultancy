@@ -1,4 +1,4 @@
-'use client'// pages/get-started.js
+'use client'
 import { useState } from 'react';
 import Head from 'next/head';
 
@@ -20,7 +20,9 @@ const GetStartedPage = () => {
     notes: ''
   });
 
-  const handleChange = (e) => {
+  // FIX: Added the correct TypeScript type for the 'e' parameter.
+  // This is the specific change that resolves the build error shown in your log.
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
@@ -33,7 +35,8 @@ const GetStartedPage = () => {
     if (step > 1) setStep(step - 1);
   };
 
-  const handleSubmit = (e) => {
+  // FIX: Added the correct TypeScript type for the form submission event.
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     alert('Form submitted successfully!');
     // In a real app, you would send the data to your backend
@@ -67,7 +70,7 @@ const GetStartedPage = () => {
               {num > 1 && <div className={`h-1 flex-1 ${step >= num ? 'bg-blue-600' : 'bg-gray-300'}`}></div>}
               <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg
                 ${step === num ? 'bg-blue-600 text-white border-4 border-blue-300' : 
-                   step > num ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'}`}>
+                  step > num ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'}`}>
                 {num}
               </div>
             </div>
@@ -316,7 +319,7 @@ const GetStartedPage = () => {
                       name="notes"
                       value={formData.notes}
                       onChange={handleChange}
-                      rows="3"
+                      rows={3}
                       className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Tell us anything else we should know..."
                     ></textarea>
