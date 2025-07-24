@@ -44,7 +44,7 @@ const CountUp = ({ end, duration = 1500, prefix = '', suffix = '' }: { end: stri
     
     // FIX: The useRef hook requires an initial value.
     // Providing 'undefined' as the initial value resolves the build error.
-    const animationFrameRef = useRef<number | undefined>();
+    const animationFrameRef = useRef<number | undefined>(undefined);
 
     const endValue = typeof end === 'string' ? parseInt(end.replace(/,/g, '')) : end;
 
