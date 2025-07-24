@@ -41,7 +41,10 @@ const CountUp = ({ end, duration = 1500, prefix = '', suffix = '' }: { end: stri
     const [count, setCount] = useState(0);
     // Use the ref returned by the hook
     const [ref, isVisible] = useOnScreen({ threshold: 0.5 });
-    const animationFrameRef = useRef<number>();
+    
+    // FIX: The useRef hook requires an initial value.
+    // Providing 'undefined' as the initial value resolves the build error.
+    const animationFrameRef = useRef<number | undefined>();
 
     const endValue = typeof end === 'string' ? parseInt(end.replace(/,/g, '')) : end;
 
@@ -138,9 +141,6 @@ const HomePage = () => {
     const card = formRef.current;
     if (!card) return;
 
-    // FIX: Explicitly typed the 'e' parameter as a MouseEvent.
-    // This resolves the "e is not defined" error by ensuring the event object
-    // and its properties (like clientX and clientY) are correctly recognized.
     const handleMouseMove = (e: MouseEvent) => {
       const { left, top, width, height } = card.getBoundingClientRect();
       const x = e.clientX - left;
