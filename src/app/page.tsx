@@ -4,8 +4,8 @@ import Head from 'next/head';
 import Navbar from './components/Navbar';
 
 // A custom hook for observing when an element enters the viewport
-const useOnScreen = (options) => {
-  const ref = useRef(null);
+const useOnScreen = (options: IntersectionObserverInit) => {
+  const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -14,7 +14,9 @@ const useOnScreen = (options) => {
       if (entry.isIntersecting) {
         setIsVisible(true);
         // Unobserve after it's visible once to prevent re-triggering
-        observer.unobserve(entry.target);
+        if (ref.current) {
+            observer.unobserve(ref.current);
+        }
       }
     }, options);
 
@@ -30,23 +32,23 @@ const useOnScreen = (options) => {
     };
   }, [ref, options]);
 
-  return [ref, isVisible];
+  return [ref, isVisible] as const;
 };
 
 
 // Animated number counter component using requestAnimationFrame for smooth counting
-const CountUp = ({ end, duration = 1500, prefix = '', suffix = '' }) => {
+const CountUp = ({ end, duration = 1500, prefix = '', suffix = '' }: { end: string | number, duration?: number, prefix?: string, suffix?: string }) => {
     const [count, setCount] = useState(0);
     // Use the ref returned by the hook
     const [ref, isVisible] = useOnScreen({ threshold: 0.5 });
-    const animationFrameRef = useRef();
+    const animationFrameRef = useRef<number>();
 
     const endValue = typeof end === 'string' ? parseInt(end.replace(/,/g, '')) : end;
 
     useEffect(() => {
         if (isVisible) {
-            let startTimestamp = null;
-            const step = (timestamp) => {
+            let startTimestamp: number | null = null;
+            const step = (timestamp: number) => {
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
                 const currentCount = Math.floor(progress * endValue);
@@ -85,14 +87,14 @@ const HomePage = () => {
   const [isTitleComplete, setIsTitleComplete] = useState(false);
   const [showButtons, setShowButtons] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const formRef = useRef(null);
+  const formRef = useRef<HTMLDivElement>(null);
 
   const fullTitle = "Your Journey to Studying Abroad Starts Here";
 
   // Typing animation for the hero title - with looping
   useEffect(() => {
     let i = 0;
-    let typingInterval;
+    let typingInterval: NodeJS.Timeout;
 
     const startTyping = () => {
         typingInterval = setInterval(() => {
@@ -136,7 +138,10 @@ const HomePage = () => {
     const card = formRef.current;
     if (!card) return;
 
-    const handleMouseMove = (e) => {
+    // FIX: Explicitly typed the 'e' parameter as a MouseEvent.
+    // This resolves the "e is not defined" error by ensuring the event object
+    // and its properties (like clientX and clientY) are correctly recognized.
+    const handleMouseMove = (e: MouseEvent) => {
       const { left, top, width, height } = card.getBoundingClientRect();
       const x = e.clientX - left;
       const y = e.clientY - top;
@@ -161,7 +166,7 @@ const HomePage = () => {
     };
   }, [showForm]);
   
-  const handleProgramSearch = async (e) => {
+  const handleProgramSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setFormStatus({ message: 'Submitting...', type: 'info' });
@@ -192,7 +197,7 @@ const HomePage = () => {
         } else {
             throw new Error(result.message || 'An unknown error occurred.');
         }
-    } catch (error) {
+    } catch (error: any) {
         setFormStatus({ message: error.message, type: 'error' });
     } finally {
         setIsSubmitting(false);
@@ -202,7 +207,7 @@ const HomePage = () => {
   };
 
   // Restored handleSubmit function for the email subscription form
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Here you would typically handle the email subscription logic
     console.log(`Email submitted: ${email}`);
@@ -538,7 +543,7 @@ const HomePage = () => {
             ].map((testimonial, index) => (
               <div key={index} className={`bg-blue-700 p-8 rounded-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 ${testimonialsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{transitionDelay: `${index * 75}ms`}}>
                 <div className="flex items-center mb-6">
-                  <div className="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16 flex-shrink-0" />
+                  <div className="bg-gray-200 border-2 border-dashed rounded-full w-16 h-16 flex-shrink-0" />
                   <div className="ml-4">
                     <h4 className="font-bold text-lg">{testimonial.name}</h4>
                     <p className="text-blue-100">{testimonial.program}</p>
